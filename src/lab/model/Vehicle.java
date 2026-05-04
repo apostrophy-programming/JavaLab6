@@ -1,5 +1,7 @@
 package lab.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -8,7 +10,9 @@ import java.time.LocalDate;
  *
  * @author Max
  */
-public class Vehicle implements Comparable<Vehicle> {
+public class Vehicle implements Comparable<Vehicle>, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
@@ -150,19 +154,14 @@ public class Vehicle implements Comparable<Vehicle> {
     }
 
     /**
-     * Сравнивает два транспортных средства по мощности двигателя и по вместимости.
+     * Сравнивает два транспортных средства по названию.
      *
      * @param o объект для сравнения
      * @return отрицательное, ноль или положительное число
      */
     @Override
     public int compareTo(Vehicle o) {
-        int compareValue = Integer.compare(this.enginePower, o.enginePower);
-        if (compareValue !=0) {
-            return  compareValue;
-        }
-        else
-            return Float.compare(this.capacity, o.capacity);
+        return name.compareTo(o.getName());
     }
 
     /**

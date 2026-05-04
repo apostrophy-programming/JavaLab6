@@ -1,5 +1,7 @@
 package lab.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -8,8 +10,10 @@ import java.util.Objects;
  * @author Max
  */
 
-public class Coordinates {
+public class Coordinates implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Integer x; // Поле не может быть null
     private Long y; // Поле не может быть null, значение должно быть больше -289
 
