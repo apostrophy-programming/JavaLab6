@@ -1,43 +1,32 @@
 package lab.command;
 
-import lab.App;
+import lab.client.Client;
+import lab.collection.CollectionManager;
 
-/**
- * Команда {@code help} – выводит список всех доступных команд с их описанием.
- *
- * @see Command
- */
 public class HelpCommand implements Command {
-    private final App app;
+    private Client client;
 
-    /**
-     * Конструктор команды.
-     *
-     * @param app экземпляр приложения (для доступа к карте команд)
-     */
-    public HelpCommand(App app) {
-        this.app = app;
+    public HelpCommand(Client client) {
+        this.client = client;
     }
 
-    /**
-     * Выполняет команду: выводит на экран все команды и их описания.
-     *
-     * @param args аргументы не используются
-     */
-    @Override
-    public void execute(String[] args) {
-        System.out.println("Доступные команды:");
-        app.getCommands().forEach((name, cmd) ->
-                System.out.printf("  %-30s %s\n", name, cmd.getDescription()));
-    }
-
-    /**
-     * Возвращает описание команды.
-     *
-     * @return строка "вывести справку по доступным командам"
-     */
     @Override
     public String getDescription() {
-        return "вывести справку по доступным командам";
+        return "help : вывести справку по доступным командам";
     }
+
+    @Override
+    public String[] execute(String[] args) {
+        System.out.println("Доступные команды:");
+        for (Command command: client.getCommands().values()) {
+            System.out.println(command.getDescription());
+        }
+        return new String[0];
+    }
+
+    @Override
+    public void setCollectionManager(CollectionManager collectionManager) {
+    }
+
+
 }

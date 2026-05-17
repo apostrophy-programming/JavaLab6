@@ -1,20 +1,15 @@
 package lab.command;
 
-/**
- * Интерфейс для всех команд приложения.
- * Каждая конкретная команда должна реализовать методы execute и getDescription.
- */
-public interface Command {
-    /**
-     * Выполняет команду.
-     * @param args аргументы команды (без имени команды)
-     */
-    void execute(String[] args);
 
-    /**
-     * Возвращает описание команды для вывода в справке.
-     *
-     * @return строка с кратким описанием
-     */
+import lab.collection.CollectionManager;
+
+import java.io.IOException;
+import java.io.Serializable;
+
+public interface Command extends Serializable {
+
     String getDescription();
+    String[] execute(String[] args) throws IOException, ClassNotFoundException;
+    void setCollectionManager (CollectionManager collectionManager);
+
 }

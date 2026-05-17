@@ -1,49 +1,45 @@
 package lab.command;
 
+import lab.client.Client;
 import lab.collection.CollectionManager;
 import lab.model.Vehicle;
 
+import java.io.IOException;
 import java.util.List;
 
-/**
- * Команда {@code show}.
- * Выводит все элементы коллекции в строковом представлении.
- *
- */
 public class ShowCommand implements Command {
-    private final CollectionManager collectionManager;
+    private static final long serialVersionUID = 1L;
+    private transient Client client;
+    private CollectionManager collectionManager;
 
-    /**
-     * Конструктор команды.
-     *
-     * @param collectionManager менеджер коллекции, содержащий элементы
-     */
-    public ShowCommand(CollectionManager collectionManager) {
-        this.collectionManager = collectionManager;
+    public ShowCommand(Client client) {
+        this.client = client;
     }
 
-    /**
-     * Выполняет команду: выводит каждый элемент коллекции на отдельной строке.
-     * Если коллекция пуста, выводит соответствующее сообщение.
-     *
-     * @param args аргументы команды (не используются)
-     */
-    @Override
-    public void execute(String[] args) {
-        List<Vehicle> sorted = collectionManager.getSortedList();
-        if (sorted.isEmpty()) {
-            System.out.println("Коллекция пуста.");
-        } else {
-            sorted.forEach(System.out::println);
-        }
-    }
-    /**
-     * Возвращает описание команды.
-     *
-     * @return строка "вывести все элементы коллекции"
-     */
     @Override
     public String getDescription() {
-        return "вывести все элементы коллекции";
+        return "show : вывести все элементы коллекции в строковом представлении";
+    }
+
+    @Override
+    public String[] execute(String[] args) throws IOException, ClassNotFoundException {
+        if (client!=null) {
+            client.sendCommand(this);
+            return client.receiveResponse().getText();
+        }
+        if (collectionManager!=null) {
+            List<Vehicle> sorted = collectionManager.getSortedList();
+            if (sorted.isEmpty()) {
+                return new String[]{"Коллекция пуста."};
+            } else {
+                return sorted.stream().map(Vehicle::toString).toArray(String[]::new);
+            }
+        }
+        return new String[0];
+    }
+
+    @Override
+    public void setCollectionManager(CollectionManager collectionManager) {
+        this.collectionManager = collectionManager;
     }
 }

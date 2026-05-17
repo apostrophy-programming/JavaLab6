@@ -1,36 +1,17 @@
-package lab.io;
+package lab.client;
 
 import lab.model.*;
-
-import java.time.LocalDate;
 import java.util.Scanner;
 
-/**
- * Обрабатывает ввод данных от пользователя с консоли.
- * Содержит методы для чтения различных типов данных с валидацией.
- * При некорректном вводе запрашивает повторный ввод до получения правильного значения.
- *
- * @author Max
- */
 public class InputManager {
     private Scanner scanner;
     private boolean isReadingInput = true;
 
-    /**
-     * Конструктор, инициализирует сканер System.in.
-     */
-    public InputManager() {
+    public InputManager(Scanner scanner) {
+        this.scanner = scanner;
     }
 
-    /**
-     * Читает объект Vehicle с консоли.
-     *
-     * @param isUpdate   если true, id и дата не запрашиваются (генерируются автоматически)
-     * @param existingId для update можно передать id, чтобы не генерировать новый
-     * @return новый объект Vehicle
-     */
     public Vehicle readVehicle(boolean isUpdate, Long existingId) {
-        LocalDate creationDate = isUpdate ? null : LocalDate.now();
         if (isReadingInput) {
             String name = readString("Введите name (не может быть пустым): ", false, true);
 
@@ -48,7 +29,7 @@ public class InputManager {
             System.out.println("Доступные FuelType: GASOLINE, MANPOWER, PLASMA, ANTIMATTER (можно оставить пустым)");
             FuelType fuelType = readEnum("Введите fuelType: ", FuelType.class, true);
 
-            return new Vehicle(null, name, coordinates, creationDate, enginePower, capacity, type, fuelType);
+            return new Vehicle(null, name, coordinates, null, enginePower, capacity, type, fuelType);
         }
         else {
             String name = readString("", false, true);
@@ -60,35 +41,10 @@ public class InputManager {
             VehicleType type = readEnum("", VehicleType.class, false);
             FuelType fuelType = readEnum("", FuelType.class, true);
 
-            return new Vehicle(null, name, coordinates, creationDate, enginePower, capacity, type, fuelType);
+            return new Vehicle(null, name, coordinates, null, enginePower, capacity, type, fuelType);
         }
     }
 
-
-    public void setScanner(Scanner scanner) {
-        this.scanner = scanner;
-    }
-
-    public Scanner getScanner() {
-        return scanner;
-    }
-
-    public void setReadingInput(boolean readingInput) {
-        isReadingInput = readingInput;
-    }
-
-    public boolean isReadingInput() {
-        return isReadingInput;
-    }
-
-    /**
-     * Читает строку с консоли.
-     *
-     * @param prompt   приглашение к вводу
-     * @param nullable разрешено ли null (пустая строка)
-     * @param nonEmpty требуется ли непустое значение (игнорируется, если nullable == true)
-     * @return введённая строка или null, если nullable разрешён и введена пустая строка
-     */
     public String readString(String prompt, boolean nullable, boolean nonEmpty) {
         while (true) {
             System.out.print(prompt);
@@ -106,15 +62,6 @@ public class InputManager {
         }
     }
 
-    /**
-     * Читает целое число (Integer) с консоли.
-     *
-     * @param prompt   приглашение к вводу
-     * @param nullable разрешено ли null
-     * @param min      минимальное допустимое значение (исключительно, если не null)
-     * @param max      максимальное допустимое значение (исключительно, если не null)
-     * @return введённое число или null
-     */
     public Integer readInt(String prompt, boolean nullable, Integer min, Integer max) {
         while (true) {
             System.out.print(prompt);
@@ -137,15 +84,6 @@ public class InputManager {
         }
     }
 
-    /**
-     * Читает длинное целое число (Long) с консоли.
-     *
-     * @param prompt   приглашение к вводу
-     * @param nullable разрешено ли null
-     * @param min      минимальное допустимое значение (исключительно, если не null)
-     * @param max      максимальное допустимое значение (исключительно, если не null)
-     * @return введённое число или null
-     */
     public Long readLong(String prompt, boolean nullable, Long min, Long max) {
         while (true) {
             System.out.print(prompt);
@@ -168,15 +106,6 @@ public class InputManager {
         }
     }
 
-    /**
-     * Читает число с плавающей точкой (Float) с консоли.
-     *
-     * @param prompt   приглашение к вводу
-     * @param nullable разрешено ли null
-     * @param min      минимальное допустимое значение (исключительно, если не null)
-     * @param max      максимальное допустимое значение (исключительно, если не null)
-     * @return введённое число или null
-     */
     public Float readFloat(String prompt, boolean nullable, Float min, Float max) {
         while (true) {
             System.out.print(prompt);
@@ -199,15 +128,6 @@ public class InputManager {
         }
     }
 
-    /**
-     * Читает значение перечисления (enum) с консоли.
-     *
-     * @param prompt     приглашение к вводу
-     * @param enumClass  класс перечисления
-     * @param nullable   разрешено ли null (пустая строка)
-     * @param <T>        тип перечисления
-     * @return константа перечисления или null
-     */
     public <T extends Enum<T>> T readEnum(String prompt, Class<T> enumClass, boolean nullable) {
         while (true) {
             System.out.print(prompt);
@@ -220,6 +140,5 @@ public class InputManager {
             }
         }
     }
-
 
 }

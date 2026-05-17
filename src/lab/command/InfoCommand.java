@@ -1,43 +1,45 @@
 package lab.command;
 
+import lab.client.Client;
 import lab.collection.CollectionManager;
+import lab.model.Vehicle;
 
-/**
- * Команда {@code info} – выводит список всех доступных команд с их описанием.
- *
- * @see Command
- */
+import java.io.IOException;
+import java.util.List;
+
 public class InfoCommand implements Command {
-    private final CollectionManager collectionManager;
+    private static final long serialVersionUID = 1L;
+    private transient Client client;
+    private CollectionManager collectionManager;
 
-    /**
-     * Конструктор команды.
-     *
-     * @param collectionManager экземпляр менеджера коллекции (для доступа к данным коллекции)
-     */
-    public InfoCommand(CollectionManager collectionManager) {
+    public InfoCommand(Client client) {
+        this.client = client;
+    }
+
+    @Override
+    public String getDescription() {
+        return "info : вывести в стандартный поток вывода информацию о коллекции";
+    }
+
+    @Override
+    public String[] execute(String[] args) throws IOException, ClassNotFoundException {
+        if (client!=null) {
+            client.sendCommand(this);
+            return client.receiveResponse().getText();
+        }
+        if (collectionManager!=null) {
+            return new String[]{
+                    "Тип коллекции: " + collectionManager.getType(),
+                    "Дата инициализации: " + collectionManager.getInitializationDate(),
+                    "Количество элементов: " + collectionManager.size()
+            };
+        }
+        return new String[0];
+    }
+
+    @Override
+    public void setCollectionManager(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
     }
 
-    /**
-     * Выполняет команду: выводит на экран все команды и их описания.
-     *
-     * @param args аргументы не используются
-     */
-    @Override
-    public void execute(String[] args) {
-        System.out.println("Тип коллекции: " + collectionManager.getType());
-        System.out.println("Дата инициализации: " + collectionManager.getInitializationDate());
-        System.out.println("Количество элементов: " + collectionManager.size());
-    }
-
-    /**
-     * Возвращает описание команды.
-     *
-     * @return строка "вывести информацию о коллекции"
-     */
-    @Override
-    public String getDescription() {
-        return "вывести информацию о коллекции";
-    }
 }
