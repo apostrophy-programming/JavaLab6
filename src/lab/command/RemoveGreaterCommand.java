@@ -5,20 +5,21 @@ import lab.collection.CollectionManager;
 import lab.model.Vehicle;
 
 import java.io.IOException;
+import java.util.List;
 
-public class AddCommand implements Command {
+public class RemoveGreaterCommand implements Command {
     private static final long serialVersionUID = 1L;
-    private transient CollectionManager collectionManager;
     private transient Client client;
+    private CollectionManager collectionManager;
     private Vehicle vehicle;
 
-    public AddCommand(Client client) {
+    public RemoveGreaterCommand(Client client) {
         this.client = client;
     }
 
     @Override
     public String getDescription() {
-        return "add {element} : добавить новый элемент в коллекцию";
+        return "remove_greater {element} : удалить из коллекции все элементы, превышающие заданный";
     }
 
     @Override
@@ -29,16 +30,20 @@ public class AddCommand implements Command {
             return client.receiveResponse().getText();
         }
         if (collectionManager!=null) {
-            collectionManager.add(vehicle);
-            return new String[]{"Добавлен элемент: " + vehicle.toString()};
+            List<Vehicle> toRemove = collectionManager.getGreaterThan(vehicle);
+            if (toRemove.isEmpty()) {
+                return new String[]{"Нет элементов, превышающих заданный."};
+            }
+            for (Vehicle v : toRemove) {
+                collectionManager.removeById(v.getId());
+            }
+            return new String[]{"Удалено элементов: " + toRemove.size()};
         }
         return new String[0];
     }
 
     @Override
     public void setCollectionManager(CollectionManager collectionManager) {
-        this.collectionManager=collectionManager;
+        this.collectionManager = collectionManager;
     }
-
-
 }

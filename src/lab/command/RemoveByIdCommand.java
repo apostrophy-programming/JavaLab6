@@ -5,28 +5,27 @@ import lab.collection.CollectionManager;
 import lab.common.Response;
 import lab.model.Vehicle;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
 
-public class UpdateCommand implements Command{
+public class RemoveByIdCommand implements Command{
     private static final long serialVersionUID = 1L;
     private transient Client client;
     private transient CollectionManager collectionManager;
-    private Vehicle vehicle;
+    private Long id;
 
-    public UpdateCommand(Client client){
+    public RemoveByIdCommand(Client client){
         this.client = client;
     }
     @Override
     public String getDescription() {
-        return "update id {element} : обновить значение элемента коллекции, id которого равен заданному";
+        return "remove_by_id id : удалить элемент из коллекции по его id";
     }
 
     @Override
     public String[] execute(String[] args) {
         if (client!=null) {
             if (args.length != 1) {
-                throw new IllegalArgumentException("использование: update id");
+                throw new IllegalArgumentException("использование: remove_by_id id");
             }
             long id;
             try {
@@ -39,8 +38,7 @@ public class UpdateCommand implements Command{
                 try {
                     Response response = client.receiveResponse();
                     if (Boolean.parseBoolean(response.getText()[0])) {
-                        vehicle = client.getInputManager().readVehicle(true, id);
-                        vehicle.setId(id);
+                        this.id = id;
                         client.sendCommand(this);
                     }
                     else {
@@ -50,13 +48,13 @@ public class UpdateCommand implements Command{
                     throw new RuntimeException(e);
                 }
             } catch (IOException e) {
-                System.err.println("Ошибка проверки Id <- UpdateCommand :");
+                System.err.println("Ошибка проверки Id <- RemoveByIdCommand :");
             }
             return new String[0];
         }
         if (collectionManager!=null) {
-            collectionManager.update(vehicle.getId(), vehicle);
-            return new String[]{"Элемент с id " + vehicle.getId() + " обновлён."};
+            collectionManager.removeById(id);
+            return new String[]{"Элемент с id " + id + " удалён."};
         }
         return new String[0];
     }

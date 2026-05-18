@@ -161,7 +161,12 @@ public class Vehicle implements Comparable<Vehicle>, Serializable {
      */
     @Override
     public int compareTo(Vehicle o) {
-        return name.compareTo(o.getName());
+        int compareValue = Integer.compare(this.enginePower, o.enginePower);
+        if (compareValue !=0) {
+            return  compareValue;
+        }
+        else
+            return Float.compare(this.capacity, o.capacity);
     }
 
     /**

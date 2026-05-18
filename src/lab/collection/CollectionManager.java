@@ -195,7 +195,9 @@ public class CollectionManager {
      * @return список элементов в порядке возрастания id
      */
     public List<Vehicle> getSortedList() {
-        return collection.stream().sorted().collect(Collectors.toList());
+        return collection.stream()
+                .sorted(Comparator.comparing(Vehicle::getName))
+                .collect(Collectors.toList());
     }
 
 

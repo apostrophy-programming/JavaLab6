@@ -5,40 +5,42 @@ import lab.collection.CollectionManager;
 import lab.model.Vehicle;
 
 import java.io.IOException;
+import java.util.List;
 
-public class AddCommand implements Command {
+public class ClearCommand implements Command {
     private static final long serialVersionUID = 1L;
-    private transient CollectionManager collectionManager;
     private transient Client client;
-    private Vehicle vehicle;
+    private CollectionManager collectionManager;
 
-    public AddCommand(Client client) {
+    public ClearCommand(Client client) {
         this.client = client;
     }
 
     @Override
     public String getDescription() {
-        return "add {element} : добавить новый элемент в коллекцию";
+        return "clear : очистить коллекцию";
     }
 
     @Override
     public String[] execute(String[] args) throws IOException, ClassNotFoundException {
         if (client!=null) {
-            vehicle = client.getInputManager().readVehicle(false, null);
             client.sendCommand(this);
             return client.receiveResponse().getText();
         }
         if (collectionManager!=null) {
-            collectionManager.add(vehicle);
-            return new String[]{"Добавлен элемент: " + vehicle.toString()};
+            if (collectionManager.size() > 0) {
+                collectionManager.clear();
+                return new String[]{"Коллекция очищена."};
+            }
+            else {
+                return new String[]{"Коллекция была пуста."};
+            }
         }
         return new String[0];
     }
 
     @Override
     public void setCollectionManager(CollectionManager collectionManager) {
-        this.collectionManager=collectionManager;
+        this.collectionManager = collectionManager;
     }
-
-
 }

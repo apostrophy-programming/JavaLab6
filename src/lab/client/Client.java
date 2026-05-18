@@ -6,6 +6,7 @@ import lab.common.Response;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -23,17 +24,25 @@ public class Client {
         this.port = port;
         scanner = new Scanner(System.in);
         this.inputManager = new InputManager(scanner);
-        this.commands = new HashMap<>();
+        this.commands = new LinkedHashMap<>();
         initCommands();
     }
 
-    private void initCommands() {
+    private synchronized void initCommands() {
         commands.put("help", new HelpCommand(this));
         commands.put("info", new InfoCommand(this));
         commands.put("show", new ShowCommand(this));
         commands.put("add", new AddCommand(this));
         commands.put("update", new UpdateCommand(this));
+        commands.put("remove_by_id", new RemoveByIdCommand(this));
+        commands.put("clear", new ClearCommand(this));
         commands.put("exit", new ExitCommand());
+        commands.put("remove_first", new RemoveFirstCommand(this));
+        commands.put("add_if_min", new AddIfMinCommand(this));
+        commands.put("remove_greater", new RemoveGreaterCommand(this));
+        commands.put("count_by_fuel_type", new CountByFuelTypeCommand(this));
+        commands.put("count_greater_than_capacity", new CountGreaterThanCapacityCommand(this));
+        commands.put("filter_contains_name", new FilterContainsNameCommand(this));
     }
 
     public void start() {
