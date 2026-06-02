@@ -9,7 +9,7 @@ import model.Vehicle;
 import java.util.List;
 
 public class FilterContainsNameCommand implements ServerCommand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 111L;
     private String substring;
 
     @Override

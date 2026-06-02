@@ -8,7 +8,7 @@ import model.Vehicle;
 import java.util.List;
 
 public class ShowCommand implements ServerCommand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 101L;
 
     @Override
     public String getName() {

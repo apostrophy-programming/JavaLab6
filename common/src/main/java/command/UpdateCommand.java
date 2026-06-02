@@ -6,7 +6,7 @@ import connection.Response;
 import model.Vehicle;
 
 public class UpdateCommand implements ServerCommand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 103L;
     private Vehicle vehicle;
     private Long id;
 

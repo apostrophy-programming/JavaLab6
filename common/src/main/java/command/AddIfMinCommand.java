@@ -6,7 +6,7 @@ import connection.Response;
 import model.Vehicle;
 
 public class AddIfMinCommand implements ServerCommand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 107L;
     private Vehicle vehicle;
 
     @Override

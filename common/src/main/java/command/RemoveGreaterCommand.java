@@ -8,7 +8,7 @@ import model.Vehicle;
 import java.util.List;
 
 public class RemoveGreaterCommand implements ServerCommand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 108L;
     private Vehicle vehicle;
 
     @Override

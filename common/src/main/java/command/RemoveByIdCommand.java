@@ -5,7 +5,7 @@ import connection.CollectionManager;
 import connection.Response;
 
 public class RemoveByIdCommand implements ServerCommand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 104L;
     private Long id;
 
     @Override

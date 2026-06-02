@@ -5,7 +5,7 @@ import connection.CollectionManager;
 import connection.Response;
 
 public class ClearCommand implements ServerCommand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 105L;
 
     @Override
     public String getName() {
