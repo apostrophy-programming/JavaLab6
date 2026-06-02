@@ -35,6 +35,7 @@ public class Client {
         commandFactory = new CommandFactory(this);
         scriptManager = new ScriptManager();
         initCommands();
+
     }
 
     private synchronized void initCommands() {

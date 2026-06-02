@@ -17,6 +17,8 @@ public class Server {
     private Selector selector;
     private final RealCollectionManager realCollectionManager;
     private final FileManager fileManager;
+    private volatile boolean running = true;
+    private Thread consoleThread;
 
     public Server(int port, String file) {
         this.port = port;
@@ -42,7 +44,9 @@ public class Server {
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
         System.out.println("Сервер запущен на порту: " + port);
 
-        while (true) {
+        startConsoleHandler();
+
+        while (running) {
             selector.select();
             Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
             while (keys.hasNext()) {
@@ -59,6 +63,7 @@ public class Server {
                 } else if (key.isWritable()) {
                     doWrite(key);
                 }
+
             }
         }
     }
@@ -133,6 +138,52 @@ public class Server {
         } catch (Exception e) {
             System.err.println("Ошибка при сохранении: " + e.getMessage());
         }
+    }
+
+    public void exit() {
+        if (!running) return;
+        running = false;
+        System.out.println("Завершение работы сервера...");
+        save();
+        if (selector != null && selector.isOpen()) {
+            selector.wakeup();
+            try {
+                selector.close();
+            } catch (IOException e) {
+                System.err.println("Ошибка закрытия selector: " + e.getMessage());
+            }
+        }
+        if (consoleThread != null && consoleThread.isAlive()) {
+            consoleThread.interrupt();
+        }
+        System.exit(0);
+    }
+
+    private void startConsoleHandler() {
+        consoleThread = new Thread(() -> {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+                String line;
+                while (running) {
+                    line = reader.readLine();
+                    if (line == null) {
+                        break;
+                    }
+                    line = line.trim().toLowerCase();
+                    if ("exit".equals(line)) {
+                        System.out.println("Получена команда завершения из консоли.");
+                        exit();
+                        break;
+                    } else if ("save".equals(line)) {
+                        save();
+                        System.out.println("Коллекция сохранена.");
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Ошибка чтения консоли: " + e.getMessage());
+            }
+        });
+        consoleThread.setDaemon(false);
+        consoleThread.start();
     }
 
 }

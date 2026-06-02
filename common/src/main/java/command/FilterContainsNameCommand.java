@@ -14,7 +14,7 @@ public class FilterContainsNameCommand implements ServerCommand {
 
     @Override
     public String getName() {
-        return "count_by_fuel_type";
+        return "filter_contains_name";
     }
 
     @Override

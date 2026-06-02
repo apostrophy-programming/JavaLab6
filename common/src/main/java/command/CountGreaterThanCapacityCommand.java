@@ -10,7 +10,7 @@ public class CountGreaterThanCapacityCommand implements ServerCommand {
 
     @Override
     public String getName() {
-        return "count_by_fuel_type";
+        return "count_greater_than_capacity";
     }
 
     @Override
