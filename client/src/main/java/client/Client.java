@@ -204,6 +204,5 @@ public class Client {
         return currentScriptFile;
     }
 
-    Driver
 }
 
