@@ -7,7 +7,6 @@ import connection.Response;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.sql.Driver;
 import java.util.*;
 
 public class Client {
@@ -138,25 +137,26 @@ public class Client {
         System.exit(0);
     }
 
-    public connection.Response sendCommand (Command command) throws IOException {
+    public void sendCommand (Command command) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(command);
-        objectOutputStream.flush();
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+            objectOutputStream.writeObject(command);
+            objectOutputStream.flush();
+        }
         byte[] data = byteArrayOutputStream.toByteArray();
         dataOutputStream.writeInt(data.length);
         dataOutputStream.write(data);
         dataOutputStream.flush();
-        return null;
     }
 
-    public connection.Response receiveResponse() throws IOException, ClassNotFoundException {
+    public Response receiveResponse() throws IOException, ClassNotFoundException {
         int length = dataInputStream.readInt();
         byte[] data = new byte[length];
         dataInputStream.readFully(data);
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        return (Response) ois.readObject();
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+            return (Response) objectInputStream.readObject();
+        }
     }
 
     private void connect() throws IOException {

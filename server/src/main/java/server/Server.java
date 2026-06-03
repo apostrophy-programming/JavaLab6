@@ -52,10 +52,7 @@ public class Server {
             while (keys.hasNext()) {
                 SelectionKey key = keys.next();
                 keys.remove();
-
-                if (!key.isValid()) {
-                    continue;
-                }
+                if (!key.isValid()) continue;
                 if (key.isAcceptable()) {
                     doAccept(key);
                 } else if (key.isReadable()) {
@@ -63,7 +60,6 @@ public class Server {
                 } else if (key.isWritable()) {
                     doWrite(key);
                 }
-
             }
         }
     }
