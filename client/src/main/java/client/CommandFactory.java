@@ -5,6 +5,7 @@ import client.command.ExitCommand;
 import client.command.HelpCommand;
 import command.Command;
 import command.*;
+import model.FuelType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,32 +31,81 @@ public class CommandFactory {
 
     private void registerCommands() {
         register("help", args -> new HelpCommand(client));
-        register("exit", args -> new ExitCommand(client));
+
         register("info", args -> new InfoCommand());
+
         register("show", args -> new ShowCommand());
-        register("clear", args -> new ClearCommand());
-        register("remove_first", args -> new RemoveFirstCommand());
 
         register("add", args -> {
-            AddCommand cmd = new AddCommand();
-            cmd.setVehicle(client.getInputManager().readVehicle(false, null));
-            return cmd;
-        });
-
-        register("execute_script", args -> {
-            requireArgs(args, 1);
-            ExecuteScriptCommand cmd = new ExecuteScriptCommand(client);
-            cmd.setFileName(args[0]);
-            return cmd;
+            AddCommand addCommand = new AddCommand();
+            addCommand.setVehicle(client.getInputManager().readVehicle(false, null));
+            return addCommand;
         });
 
         register("update", args -> {
             requireArgs(args, 1);
             long id = requireLong(args[0], "id");
-            UpdateCommand cmd = new UpdateCommand();
-            cmd.setId(id);
-            cmd.setVehicle(client.getInputManager().readVehicle(false, null));
-            return cmd;
+            UpdateCommand updateCommand = new UpdateCommand();
+            updateCommand.setId(id);
+            updateCommand.setVehicle(client.getInputManager().readVehicle(false, null));
+            return updateCommand;
+        });
+
+        register("remove_by_id", args -> {
+            requireArgs(args, 1);
+            long id = requireLong(args[0], "id");
+            RemoveByIdCommand removeByIdCommand = new RemoveByIdCommand();
+            removeByIdCommand.setId(id);
+            return removeByIdCommand;
+        });
+
+        register("clear", args -> new ClearCommand());
+
+        register("execute_script", args -> {
+            requireArgs(args, 1);
+            ExecuteScriptCommand executeScriptCommand = new ExecuteScriptCommand(client);
+            executeScriptCommand.setFileName(args[0]);
+            return executeScriptCommand;
+        });
+
+        register("exit", args -> new ExitCommand(client));
+
+        register("remove_first", args -> new RemoveFirstCommand());
+
+        register("add_if_min", args -> {
+            AddIfMinCommand addIfMinCommand = new AddIfMinCommand();
+            addIfMinCommand.setVehicle(client.getInputManager().readVehicle(false, null));
+            return addIfMinCommand;
+        });
+
+        register("remove_greater", args -> {
+            RemoveGreaterCommand removeGreaterCommand = new RemoveGreaterCommand();
+            removeGreaterCommand.setVehicle(client.getInputManager().readVehicle(false, null));
+            return removeGreaterCommand;
+        });
+
+        register("count_by_fuel_type", args -> {
+            requireArgs(args, 1);
+            FuelType fuelType = requireEnum(args[0], FuelType.class);
+            CountByFuelTypeCommand countByFuelTypeCommand = new CountByFuelTypeCommand();
+            countByFuelTypeCommand.setFuelType(fuelType);
+            return countByFuelTypeCommand;
+        });
+
+        register("count_greater_than_capacity", args -> {
+            requireArgs(args, 1);
+            float capacity = requireFloat(args[0], "capacity");
+            CountGreaterThanCapacityCommand countGreaterThanCapacityCommand = new CountGreaterThanCapacityCommand();
+            countGreaterThanCapacityCommand.setCapacity(capacity);
+            return countGreaterThanCapacityCommand;
+        });
+
+        register("filter_contains_name", args -> {
+            requireArgs(args, 1);
+            String substring = args[0];
+            FilterContainsNameCommand filterContainsNameCommand = new FilterContainsNameCommand();
+            filterContainsNameCommand.setSubstring(substring);
+            return filterContainsNameCommand;
         });
     }
 
@@ -77,5 +127,31 @@ public class CommandFactory {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(name + " должен быть целым числом");
         }
+    }
+
+    private float requireFloat(String value, String name) {
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(name + " должен быть числом с плавающей точкой");
+        }
+    }
+
+    private <T extends Enum<T>> T requireEnum(String value, Class<T> enumClass) {
+        try {
+            return Enum.valueOf(enumClass, value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Недопустимое значение для " + enumClass.getSimpleName() +
+                    ". Доступны: " + String.join(", ", getEnumNames(enumClass)));
+        }
+    }
+
+    private <T extends Enum<T>> String[] getEnumNames(Class<T> enumClass) {
+        T[] constants = enumClass.getEnumConstants();
+        String[] names = new String[constants.length];
+        for (int i = 0; i < constants.length; i++) {
+            names[i] = constants[i].name();
+        }
+        return names;
     }
 }
